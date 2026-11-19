@@ -190,6 +190,21 @@
  .kidboard-v7 .sticker-wrap .art-img {width:100%;height:45px;object-fit:contain;}
 }
 </style>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="義大利 2027">
+  <meta name="theme-color" content="#FBF7EE">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+  <style>
+    @media(max-width:680px){
+      .bottomnav{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
+      .main{padding-bottom:calc(96px + env(safe-area-inset-bottom))!important}
+      .mobile-top{padding-top:calc(14px + env(safe-area-inset-top))!important}
+    }
+  </style>
 </head>
 <body>
 <div class="app">
@@ -2276,5 +2291,12 @@ renderPlan();renderBookings();renderGame();renderShop();const hash=location.hash
 
 
 
+<script>
+if("serviceWorker" in navigator){
+  window.addEventListener("load", function(){
+    navigator.serviceWorker.register("./sw.js").catch(function(){});
+  });
+}
+</script>
 </body>
 </html>
