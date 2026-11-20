@@ -539,7 +539,7 @@ function cityOptionsFor(i){const all=['羅馬','梵蒂岡','白露里治奧','�
 function orderChoices(i){const s=primarySpots(i);const patterns=[[2,0,1],[1,2,0],[2,1,0],[1,0,2]];const p=patterns[i%patterns.length];return p.map(x=>s[x]).filter(Boolean)}
 function clueFor(name){const map={'古羅馬競技場':'一圈圈拱門的大圓形競技場','君士坦丁凱旋門':'像獎盃一樣的三拱門紀念碑','梵蒂岡博物館':'館內有很多畫作與雕像的大博物館','聖彼得大教堂':'有巨大圓頂與廣場的教堂','天空之城':'長橋通往山頂小城','烏菲茲美術館':'可以看文藝復興名畫的美術館','聖母百花大教堂':'紅色大圓頂的教堂','學院美術館':'可以看見大衛雕像','貢多拉體驗':'坐黑色小船穿梭水道','沉船書店':'把書放進船和浴缸的書店','威尼斯面具工坊 DIY':'可以自己畫面具','聖馬可大教堂':'金色馬賽克很有名的教堂','總督府':'以前管理威尼斯的大房子','嘆息橋':'連接總督府與監獄的白色石橋','鳳凰劇院':'金色包廂歌劇院','聖馬可廣場嘉年華':'好多面具與服裝的節慶廣場','玻璃島':'能看玻璃工藝的小島','彩色島':'滿滿彩色房子的漁村小島','里阿爾托橋':'跨越大運河的有名石橋','米蘭大教堂':'充滿尖塔與雕像的大教堂','艾曼紐二世拱廊':'玻璃穹頂的購物長廊','最後的晚餐':'可以看達文西名畫'};return map[name]||'今天會去的重要景點'}
 function routeMapFor(d){const spots=d.events.filter(e=>e.kind==='spot').slice(0,3).map(e=>e.zh);const nodes=[{label:'出發',sub:d.city,kind:'transport',icon:'🚶'},{label:spots[0]||'景點',sub:'第 1 站',kind:'spot',icon:'①'},{label:spots[1]||'景點',sub:'第 2 站',kind:'spot',icon:'②'},{label:spots[2]||'景點',sub:'第 3 站',kind:'spot',icon:'③'},{label:'回飯店',sub:d.hotel,kind:'hotel',icon:'🏨'}];return `<div class="route-card"><h3>今日簡易路線圖</h3><div class="route-sub">用簡約可愛版順序先認識今天要去哪裡</div><div class="route-map">${nodes.map((n,idx)=>`<div class="route-node"><div class="route-stop ${n.kind}"><div class="route-dot">${n.icon}</div><small>${esc(n.sub)}</small><b>${esc(n.label)}</b></div>${idx<nodes.length-1?'<div class="route-arrow">→</div>':''}</div>`).join('')}</div></div>`}
-function renderEvent(e,i,ix,opened){const id=i+'-'+ix,checked=!!done[id],spot=e.kind==='spot',meal=e.kind==='meal';const m=mealType(e);const maps=mapUrl(e.where);return `<article class="item kind-${esc(e.kind)}"><div class="top"><div class="time">${esc(e.time)}<span class="etime">${esc(e.end)}</span></div><div class="pic">${icons[e.kind]||'📍'}</div><div class="meta"><h3><a href="${maps}" target="_blank" rel="noopener noreferrer" title="開啟 Google Maps">${esc(e.zh)} ↗</a></h3><span class="native">${esc(e.it)}</span><span class="kindtag">${({spot:'景點',hotel:'住宿',meal:'用餐',transport:'交通',rest:'休息'})[e.kind]}</span></div></div>${spot?guide(e.zh,e.desc,opened):`<p class="explain">${esc(e.desc)}</p>`}${m?renderRestaurant(i,m):''}<div class="actions"><a class="microbtn" target="_blank" rel="noopener noreferrer" href="${maps}">📍 地圖</a><button class="microbtn done ${checked?'isdone':''}" data-done="${id}">${checked?'✓ 已完成':'○ 標示完成'}</button></div></article>`}
+function renderEvent(e,i,ix,opened){const id=i+'-'+ix,checked=!!done[id],spot=e.kind==='spot',meal=e.kind==='meal';const m=mealType(e);const maps=mapUrl(e.where);return `<article class="item kind-${esc(e.kind)}"><div class="top"><div class="time">${esc(e.time)}<span class="etime">${esc(e.end)}</span></div><div class="pic">${icons[e.kind]||'📍'}</div><div class="meta"><h3><a href="${maps}" target="_blank" rel="noopener noreferrer" title="開啟 Google Maps">${esc(e.zh)} ↗</a></h3><span class="native">${esc(e.it)}</span><span class="kindtag">${({spot:'景點',hotel:'住宿',meal:'用餐',transport:'交通',rest:'休息'})[e.kind]}</span></div></div>${spot?guide(e.zh,e.desc,opened):`<p class="explain">${esc(e.desc)}</p>`}${m?renderRestaurant(i,m):''}<div class="actions"><a class="microbtn" target="_blank" rel="noopener noreferrer" href="${maps}">📍 地圖</a>${spot?`<button type="button" class="microbtn speak-btn20" data-speak-text="${esc(e.it)}" data-speak-lang="it-IT" aria-label="聽義大利語 ${esc(e.it)}">🇮🇹 聽義語</button><button type="button" class="microbtn speak-btn20" data-speak-text="${esc((window.SPOT_EN20&&window.SPOT_EN20[e.zh])||(e.where||'').split(',')[0]||e.it)}" data-speak-lang="en-US" aria-label="聽英語景點名稱">🇬🇧 聽英語</button>`:''}</div></article>`}
 function renderPlan(){const d=DAYS[day],first=d.events.findIndex(e=>e.kind==='spot');$('#plan-dayline').innerHTML=tabs('plan',day);$('#plan-content').innerHTML=`<div class="day-head"><div><div class="eyebrow">DAY ${String(day+1).padStart(2,'0')} · ${esc(d.en)}</div><h2>${esc(d.city)} <span class="eng">${esc(d.en)}</span></h2><p>${esc(d.tagline)}</p></div><div class="day-badge">${esc(d.date)} · 週${esc(d.weekday)}</div></div>${routeMapFor(d)}<div class="section-cap"><b>行程時間軸</b><small>點開景點可讀完整導覽</small></div><div class="timeline">${d.events.map((e,ix)=>renderEvent(e,day,ix,ix===first)).join('')}</div><div class="hotelfoot"><b>🏨 今晚住宿／行李安排</b><div>${esc(d.hotel)}</div><a href="${mapUrl(d.hotel+', Italy')}" target="_blank" rel="noopener noreferrer">📍 飯店地圖 ↗</a></div>`;$('#plan-dayline .day-pill.active')?.scrollIntoView({block:'nearest',inline:'center'})}
 function renderBookings(){if(!get('v9-sanmarco-booking-imported',false)){booked[6]=true;put('booked',booked);put('v9-sanmarco-booking-imported',true)}let c=BOOKING.filter((b,i)=>booked[i]).length;$('#booking-count').textContent=c+' / '+BOOKING.length;$('#booking-bar').style.width=c/BOOKING.length*100+'%';$('#bookings').innerHTML=BOOKING.map((b,i)=>`<div class="booking-card ${booked[i]?'checked':''}"><input class="check" type="checkbox" data-book="${i}" ${booked[i]?'checked':''} aria-label="${esc(b.name)}已購票"><div class="booking-main"><h3>${esc(b.name)}</h3><div class="bmeta">2027/${esc(b.date)} · ${esc(b.city)}</div>${(b.status||b.bookedTime)?`<div class="booking-status">${esc(b.status||'已標記')}${b.bookedTime?` · ${esc(b.bookedTime)}`:''}</div>`:''}<p class="bnote"><b>建議官網票種</b><br>${esc(b.ticket)}</p><p class="bnote"><b>開賣資訊／購票提醒（台灣時間）</b><br>${esc(b.sale)}</p><div class="booking-price"><div class="price-chip"><b>官方單價</b><br>${esc(b.price)}</div><div class="price-chip"><b>2 大 1 位 4 歲小孩估算</b><br>${esc(b.family)}</div></div>${b.link?`<a href="${esc(b.link)}" target="_blank" rel="noopener noreferrer">↗ 前往官方購票頁</a>`:''}</div></div>`).join('')}
 function resetFeedback(){gameFeedback='';gameCorrect=false;gameWrong='';matchSelect=null;matchDone=[];matchNote='';routePick=[]}
@@ -709,7 +709,7 @@ $('#rate').addEventListener('input',renderLuxury);
     const pick=e.target.closest('[data-v7-pick-landmark]');
     if(pick){ kidSelected = kidSelected===pick.dataset.v7PickLandmark ? '' : pick.dataset.v7PickLandmark; put('kid-selected-v7',kidSelected); quizMsg=''; renderGame(); return; }
     const slot=e.target.closest('[data-v7-place-slot]');
-    if(slot){ const idx=Number(slot.dataset.v7PlaceSlot), answer=slot.dataset.v7Answer; if(!kidSelected){ toast('先點下面一張景點貼紙，再點白色位置圈'); return; } if(kidSelected!==answer){ toast('這個位置不是它，再比對一次街區位置喔'); kidSelected=''; put('kid-selected-v7',kidSelected); renderGame(); return; } const curr={...getPlacement(gameDay)}; curr[idx]=answer; setPlacement(gameDay,curr); kidSelected=''; put('kid-selected-v7',kidSelected); markGameCompleteIfReady(); renderGame(); return; }
+    if(slot){ const idx=Number(slot.dataset.v7PlaceSlot), answer=slot.dataset.v7Answer; if(!kidSelected){ toast('先點下面一張景點貼紙，再點白色位置圈'); return; } if(kidSelected!==answer){ toast('這個位置不是它，再比對一次街區位置喔'); kidSelected=''; put('kid-selected-v7',kidSelected); renderGame(); return; } const curr={...getPlacement(gameDay)}; curr[idx]=answer; setPlacement(gameDay,curr); kidSelected=''; put('kid-selected-v7',kidSelected); activeQuiz=answer; put('kid-quiz-v7',activeQuiz); quizMsg=''; window.__v7LastChoice=-1; window.__justOpenedQuiz21=true; markGameCompleteIfReady(); renderGame(); return; }
     const oq=e.target.closest('[data-v7-open-quiz]');
     if(oq){ activeQuiz=oq.dataset.v7OpenQuiz; put('kid-quiz-v7',activeQuiz); quizMsg=''; window.__v7LastChoice=-1; renderGame(); return; }
     const qa=e.target.closest('[data-v7-quiz-name]');
@@ -904,7 +904,7 @@ $('#rate').addEventListener('input',renderLuxury);
     const leaders=`<svg class="v9-game-leaders" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${spots.map((s,i)=>`<line x1="${s.raw.x}" y1="${s.raw.y}" x2="${placed[i].x}" y2="${placed[i].y}"/><circle cx="${s.raw.x}" cy="${s.raw.y}" r=".9"/>`).join('')}</svg>`;
     const slots=spots.map((s,i)=>`<div class="sticker-slot v9-slot ${place[i]===s.name?'filled':''}" style="left:${placed[i].x}%;top:${placed[i].y}%"><button type="button" class="slot-circle-v7" data-v7-place-slot="${i}" data-v7-answer="${esc(s.name)}">${place[i]===s.name?stickerArt(s.name,true):stickerHint(s.name)}</button><div class="v9-slot-name">${esc(s.name)}</div><button type="button" class="slot-quiz-v7" data-v7-open-quiz="${esc(s.name)}">${doneQ[s.name]?'✅':'❔'} 知識挑戰</button></div>`).join('');
     const question=quiz?`<div class="quiz-box-v7"><div class="quiz-badge">${esc(qName)}</div><h3>${esc(quiz.q)}</h3><p class="tip">${esc(quiz.tip)}</p><div class="quiz-options-v7">${quiz.opts.map((o,ix)=>`<button type="button" data-v7-quiz-name="${esc(qName)}" data-v7-quiz-index="${ix}">${esc(o)}</button>`).join('')}</div>${quizMsg?`<div class="quiz-result-v7">${esc(quizMsg)}</div>`:''}</div>`:'';
-    $('#game-content').innerHTML=`<div class="kidmap-shell-v7 v9-kid-wrap"><div class="kid-helper-v7">① 拖曳彩色貼紙到相同的白底黑框輪廓（也可先點貼紙再點輪廓）　② 點「知識挑戰」回答景點題　③ 貼好所有貼紙＋答對所有知識挑戰，才能收集今天的專屬徽章。</div><div class="kidboard-v7 v9-kidboard">${newPlanSvg(idx)}${leaders}<div class="title">${esc(map.title)}<small>今天的義大利探險</small></div>${cityMini(d.city)}${slots}</div><div class="card-bank-v7">${remaining.length?remaining.map(s=>`<button type="button" class="sticker-card ${kidSelected===s.name?'selected':''}" data-v7-pick-landmark="${esc(s.name)}">${stickerArt(s.name)}<div class="name">${esc(s.name)}</div><div class="tap">${kidSelected===s.name?'選好了！請點地圖輪廓':'選這張貼紙'}</div></button>`).join(''):`<div class="kid-empty-v7">貼好了！今天的地標都找到了 🎉</div>`}</div>${question}<div class="kid-bottom-v7">${complete?'<div class="kid-finish-v7">🏅 今日貼紙收集完成！</div>':''}<button type="button" class="btn2" data-v7-reset-day>重玩今天</button><button type="button" class="btn2" data-v7-next-day>下一天 →</button></div></div>`;
+    $('#game-content').innerHTML=`<div class="kidmap-shell-v7 v9-kid-wrap"><div class="kid-helper-v7">① 拖曳（或點選）彩色貼紙到對應的白底黑框輪廓　② 貼對後會立刻進入該景點的小問題　③ 完成今天全部貼紙與題目，即可收集專屬徽章！</div><div class="kidboard-v7 v9-kidboard">${newPlanSvg(idx)}${leaders}<div class="title">${esc(map.title)}<small>今天的義大利探險</small></div>${cityMini(d.city)}${slots}</div><div class="card-bank-v7">${remaining.length?remaining.map(s=>`<button type="button" class="sticker-card ${kidSelected===s.name?'selected':''}" data-v7-pick-landmark="${esc(s.name)}">${stickerArt(s.name)}<div class="name">${esc(s.name)}</div><div class="tap">${kidSelected===s.name?'選好了！請點地圖輪廓':'選這張貼紙'}</div></button>`).join(''):`<div class="kid-empty-v7">貼好了！今天的地標都找到了 🎉</div>`}</div>${question}<div class="kid-bottom-v7">${complete?'<div class="kid-finish-v7">🏅 今日貼紙收集完成！</div>':''}<button type="button" class="btn2" data-v7-reset-day>重玩今天</button><button type="button" class="btn2" data-v7-next-day>下一天 →</button></div></div>`;
   }
   renderGame=renderNewGame;
   function realPhoto(src,secondary,title){
@@ -1999,10 +1999,7 @@ window.renderAllMap16=function(){
       const dayEl = btn.querySelector('.badge14-day');
       if(dayEl && DAYS[i]) dayEl.textContent = DAYS[i].date;
     });
-    const activePill = document.querySelector('#game-dayline .day-pill.active');
-    if(activePill && activePill.scrollIntoView){
-      try { activePill.scrollIntoView({block:'nearest', inline:'nearest'}); } catch(e){}
-    }
+    /* scrollIntoView removed in V21 to prevent viewport jumping */
   };
 
   // ---- B. Zoomable & Pannable Map Page ----
@@ -2278,6 +2275,289 @@ window.renderAllMap16=function(){
   renderGame();
   renderItalian19();
   if($('#page-map') && $('#page-map').classList.contains('active')) window.renderAllMap16();
+})();
+
+
+/* V20: iOS/iPhone PWA-proof Speech Engine (speechSynthesis + HTML5 Audio fallback)
+   + Daily Plan Spot Italian & English Audio Pronunciation */
+(function(){
+  // Clean, natural English names for every attraction in DAYS
+  window.SPOT_EN20 = {
+    '聖母大殿': 'Basilica of Saint Mary Major',
+    '羅馬競技場': 'Colosseum',
+    '帕拉丁山': 'Palatine Hill',
+    '古羅馬廣場': 'Roman Forum',
+    '西班牙廣場與階梯': 'Spanish Steps',
+    '梵蒂岡博物館': 'Vatican Museums',
+    '西斯汀禮拜堂': 'Sistine Chapel',
+    '聖彼得大教堂與圓頂': "Saint Peter's Basilica",
+    '聖天使堡外觀': "Castel Sant'Angelo",
+    '萬神殿外觀': 'Pantheon',
+    '特雷維噴泉': 'Trevi Fountain',
+    '白露里治奧天空之城': 'Civita di Bagnoregio',
+    '博爾賽納湖': 'Lake Bolsena',
+    '奧維耶托': 'Orvieto',
+    '烏菲茲美術館': 'Uffizi Gallery',
+    '米開朗基羅廣場': 'Piazzale Michelangelo',
+    '新市場長廊與野豬噴泉': 'Porcellino Fountain',
+    '比薩斜塔': 'Leaning Tower of Pisa',
+    '馬納羅拉': 'Manarola, Cinque Terre',
+    '韋爾納扎': 'Vernazza, Cinque Terre',
+    '百花大教堂': 'Florence Cathedral',
+    '學院美術館': 'Accademia Gallery',
+    '貢多拉體驗': 'Venice Gondola Ride',
+    '沉船書店': 'Acqua Alta Bookshop',
+    '威尼斯面具工坊 DIY': 'Venice Mask Workshop',
+    '聖馬可大教堂': "Saint Mark's Basilica",
+    '總督府': "Doge's Palace",
+    '嘆息橋': 'Bridge of Sighs',
+    '鳳凰劇院': 'La Fenice Theatre',
+    '聖馬可廣場嘉年華': "Venice Carnival at Saint Mark's Square",
+    '飛獅儀式預留時段': 'Flight of the Lion',
+    '玻璃島': 'Murano Island',
+    '彩色島': 'Burano Island',
+    '里阿爾托橋': 'Rialto Bridge',
+    '米蘭大教堂': 'Milan Cathedral',
+    '艾曼紐二世拱廊': 'Galleria Vittorio Emanuele the Second',
+    '達文西《最後的晚餐》': 'The Last Supper by Leonardo da Vinci',
+    '恩寵聖母堂': 'Santa Maria delle Grazie',
+    '斯福爾扎城堡': 'Sforza Castle',
+    '森皮奧內公園': 'Sempione Park',
+    '布雷拉街區散步與選物': 'Brera District'
+  };
+
+  // Pre-warm iOS voices list
+  let cachedVoices20 = [];
+  function loadVoices20(){
+    try {
+      if('speechSynthesis' in window){
+        const v = window.speechSynthesis.getVoices();
+        if(v && v.length) cachedVoices20 = v;
+      }
+    } catch(e){}
+  }
+  loadVoices20();
+  if('speechSynthesis' in window && window.speechSynthesis.addEventListener){
+    window.speechSynthesis.addEventListener('voiceschanged', loadVoices20);
+  }
+
+  // Shared HTML5 Audio element unlocked inside user click for iOS PWA fallback
+  let audioEl20 = null;
+  let activeBtn20 = null;
+  let watchdog20 = null;
+
+  function resetBtn20(){
+    if(activeBtn20){
+      activeBtn20.classList.remove('is-speaking20');
+      if(activeBtn20.dataset.origLabel){
+        activeBtn20.textContent = activeBtn20.dataset.origLabel;
+      }
+      activeBtn20 = null;
+    }
+  }
+
+  function cleanText20(raw){
+    return String(raw || '')
+      .replace(/[\/—–]/g, ', ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function playAudioFallback20(text, lang, btn){
+    const tl = lang.toLowerCase().startsWith('en') ? 'en' : 'it';
+    const url = 'https://translate.googleapis.com/translate_tts?ie=UTF-8&client=tw-ob&tl=' + tl + '&q=' + encodeURIComponent(text);
+    try {
+      if(!audioEl20){
+        audioEl20 = new Audio();
+        audioEl20.setAttribute('playsinline', '');
+      }
+      audioEl20.pause();
+      audioEl20.src = url;
+      audioEl20.onended = resetBtn20;
+      audioEl20.onerror = function(){
+        resetBtn20();
+        toast('目前無法播放語音，請確認 iPhone 未開啟靜音鍵並調高音量。');
+      };
+      const p = audioEl20.play();
+      if(p && p.catch){
+        p.catch(function(){
+          resetBtn20();
+          toast('請確認 iPhone 未開啟靜音鍵，並調高媒體音量。');
+        });
+      }
+    } catch(e){
+      resetBtn20();
+      toast('無法播放語音，請確認手機音量與靜音鍵設定。');
+    }
+  }
+
+  window.speakIosSafe20 = function(rawText, lang, btn){
+    const text = cleanText20(rawText);
+    if(!text) return;
+    lang = lang || 'it-IT';
+
+    clearTimeout(watchdog20);
+    resetBtn20();
+
+    if(btn){
+      if(!btn.dataset.origLabel) btn.dataset.origLabel = btn.textContent;
+      btn.classList.add('is-speaking20');
+      btn.textContent = '🔊 播放中…';
+      activeBtn20 = btn;
+    }
+
+    // Unlock HTML5 Audio synchronously inside the tap gesture so fallback works on iOS
+    try {
+      if(!audioEl20){
+        audioEl20 = new Audio();
+        audioEl20.setAttribute('playsinline', '');
+      }
+      audioEl20.pause();
+    } catch(e){}
+
+    // Unlock Web Audio on iOS if suspended
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if(AC){
+        if(!window.__ac20) window.__ac20 = new AC();
+        if(window.__ac20.state === 'suspended') window.__ac20.resume().catch(()=>{});
+      }
+    } catch(e){}
+
+    if(!('speechSynthesis' in window)){
+      playAudioFallback20(text, lang, btn);
+      return;
+    }
+
+    try {
+      const synth = window.speechSynthesis;
+      loadVoices20();
+      if(synth.paused) synth.resume();
+      // Only cancel when actually speaking; unconditional cancel() breaks iOS Safari/PWA!
+      if(synth.speaking) synth.cancel();
+
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang;
+      u.volume = 1.0;
+      u.rate = lang.toLowerCase().startsWith('it') ? 0.86 : 0.90;
+      u.pitch = 1.0;
+
+      // Prefer verified localService voice on iOS; avoid broken cloud voices
+      const prefix = lang.slice(0,2).toLowerCase();
+      const targetNorm = lang.toLowerCase().replace('_','-');
+      const localExact = cachedVoices20.find(v => v.localService && v.lang.toLowerCase().replace('_','-') === targetNorm);
+      const localPref = cachedVoices20.find(v => v.localService && v.lang.toLowerCase().startsWith(prefix));
+      if(localExact) u.voice = localExact;
+      else if(localPref) u.voice = localPref;
+
+      // Hold global reference to prevent iOS Safari garbage-collecting mid-speech
+      window.__ttsUtt20 = u;
+
+      let started = false;
+      u.onstart = function(){
+        started = true;
+        clearTimeout(watchdog20);
+      };
+      u.onend = function(){
+        clearTimeout(watchdog20);
+        resetBtn20();
+      };
+      u.onerror = function(){
+        clearTimeout(watchdog20);
+        if(!started){
+          playAudioFallback20(text, lang, btn);
+        } else {
+          resetBtn20();
+        }
+      };
+
+      synth.speak(u);
+
+      // Watchdog: if iOS PWA speechSynthesis silently hangs (>850ms with no start), auto-fallback to HTML5 Audio!
+      watchdog20 = setTimeout(function(){
+        if(!started && !synth.speaking){
+          try { synth.cancel(); } catch(e){}
+          playAudioFallback20(text, lang, btn);
+        }
+      }, 850);
+    } catch(err){
+      playAudioFallback20(text, lang, btn);
+    }
+  };
+
+  // Override legacy say() so any other caller also uses iOS-safe speech
+  say = function(s, lang){ window.speakIosSafe20(s, lang || 'it-IT', null); };
+
+  // Intercept Italian phrasebook speak buttons & Daily Plan IT/EN spot buttons in capture phase
+  document.addEventListener('click', function(e){
+    const itaBtn = e.target.closest('[data-ita-speak]');
+    if(itaBtn){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      window.speakIosSafe20(itaBtn.dataset.itaSpeak, 'it-IT', itaBtn);
+      return;
+    }
+    const spotBtn = e.target.closest('[data-speak-text]');
+    if(spotBtn){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      window.speakIosSafe20(spotBtn.dataset.speakText, spotBtn.dataset.speakLang || 'it-IT', spotBtn);
+      return;
+    }
+  }, true);
+
+  // Add subtle iPhone sound tip bar to #page-italian
+  const itaCats = document.getElementById('ita-cats');
+  if(itaCats && !document.getElementById('ios-audio-tip20')){
+    itaCats.insertAdjacentHTML('beforebegin', '<div id="ios-audio-tip20" class="ios-tip20">📱 <b>iPhone 聽發音提醒：</b>請確認機身側邊未開啟靜音鍵，並調高媒體音量；若離線語音無聲會自動切換線上發音。</div>');
+  }
+
+  // V20 styles for Daily Plan IT/EN buttons & speaking state
+  const css20 = document.createElement('style');
+  css20.textContent = `
+    .speak-btn20{background:#FFF7E4!important;border:1.5px solid #D9C9A3!important;color:#1E2B37!important;font-weight:700!important;cursor:pointer;transition:.15s}
+    .speak-btn20:hover,.speak-btn20:active{background:#F6B84C!important;border-color:#1E2B37!important}
+    .speak-btn20.is-speaking20,.ita-speak19.is-speaking20{background:#E56B4E!important;color:#FFFDF8!important;border-color:#1E2B37!important}
+    .ios-tip20{font-size:12px;color:#5D6960;background:#FBF5E6;border:1px solid #E5D9BC;border-radius:14px;padding:9px 13px;margin:10px 0 4px;line-height:1.5}
+  `;
+  document.head.appendChild(css20);
+
+  // Re-render plan so new IT/EN buttons appear immediately
+  renderPlan();
+})();
+
+
+/* V21: Prevent scroll-jump on every Mini-Game action + smooth focus on newly opened quiz */
+(function(){
+  const prevGame21 = renderGame;
+  renderGame = function(){
+    const savedY = window.scrollY || document.documentElement.scrollTop || 0;
+    const gc = document.getElementById('game-content');
+    if(gc && gc.offsetHeight > 0){
+      gc.style.minHeight = gc.offsetHeight + 'px';
+    }
+    prevGame21();
+    if(gc){
+      requestAnimationFrame(function(){
+        gc.style.minHeight = '';
+      });
+    }
+    if(window.__justOpenedQuiz21){
+      window.__justOpenedQuiz21 = false;
+      window.scrollTo(0, savedY);
+      requestAnimationFrame(function(){
+        const qb = document.querySelector('#game-content .quiz-box-v7');
+        if(qb && qb.scrollIntoView){
+          try { qb.scrollIntoView({behavior:'smooth', block:'nearest'}); } catch(e){}
+        }
+      });
+    } else {
+      window.scrollTo(0, savedY);
+      requestAnimationFrame(function(){
+        window.scrollTo(0, savedY);
+      });
+    }
+  };
 })();
 
   renderPlan(); renderGame(); renderShop();
